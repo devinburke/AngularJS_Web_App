@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8"/>
+		<title>Learn AngularJS - Navigation Menu</title>
+		<link href="http://fonts.googleapis.com/css?family=Open+Sans:400,700" rel="stylesheet" />
+		<link rel="stylesheet" href="css/normalize.css">
+		<link rel='stylesheet prefetch' href='http://netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap.min.css'>
+		<link href="http://fonts.googleapis.com/css?family=PT+Sans+Narrow:700" rel="stylesheet" />
+        <link rel="stylesheet" href="css/style.css">
+		<!-- The main CSS file -->
+		<link href="style.css" rel="stylesheet" />
+		<!--[if lt IE 9]>
+			<script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+		<![endif]-->
+	</head>
+	
+	<body ng-app="glutenapp"ng-controller="glutendata">
+	
+	<!-- NAV AND WELCOME START -->
+	<!-- MAIN BODY START -->
+	<div id="main">
+	<h2> Gluten Free Checker</h2>
+		<!-- Navigation menu set by the active variable ($scope.active) -->
+		<nav class="{{active}}" ng-click="$event.preventDefault()">
+			<a href="#" class="home" ng-click="active='home'">Home</a>
+			<a href="#" class="projects" ng-click="active='projects'">Submit Food</a>
+			<a href="#" class="services" ng-click="active='services'">Lists</a>
+			<a href="#" class="contact" ng-click='update_count()'>About</a>
+		</nav>
+	<p class = "welcome_p" ng-hide="active">Please click a menu item</p>
+	<!-- NAV AND WELCOME END -->
+	
+	<!-- GLUTEN LISTS START -->
+	<span ng-show="active == 'services'">
+		<table>
+			<tr>
+				<th>Food Name</th>
+				<th>Gluten Free</th>
+			</tr>
+			<tr ng-repeat="x in tableitems">
+				<td>{{ x.Name }}</td>
+				<td>{{ x.Free }}</td>
+			</tr>
+		</table>
+	</span>
+	<!-- GLUTEN LISTS END -->
+	
+	<!-- ABOUT PAGE START -->
+	<span ng-show="active == 'contact'">
+		<div class = "aboutpage">
+			<p> This web applications allows the users to search our food <br>
+			database to determine if their selected item is gluten free. <br>
+			This is meant to be an open-source applications that allows users <br>
+			to search for food items and if they are not found, they may submit <br>
+			missing items. 
+			</p>	
+			<p>Below is the total count of food items in our database:</p>
+			<br>	
+			<p id="count" class = "numbers"></p>
+			<a href="https://play.google.com/store/apps/details?id=com.stocktwt.app2">
+			<img alt="Get it on Google Play"
+			src="https://developer.android.com/images/brand/en_generic_rgb_wo_60.png" />
+			</a>
+		</div>
+	</span>
+	<!-- ABOUT PAGE END -->
+	
+	<!-- HOME/SEARCH PAGE START -->
+	<span ng-show="active == 'home'">
+		<div class="bar">
+			<input type="text" ng-model="searchString" placeholder="Enter your search terms" />
+		</div>
+		<div class = "firstlist">
+			<ul>
+				<li ng-repeat="i in items | searchFor:searchString">
+					<p>{{i.Name}}</p>
+				</li>
+						
+			</ul>
+		</div>
+		</b>
+	</span>
+	<!-- HOME/SEARCH PAGE END -->
+	
+	
+	<!-- SUBMISSION FORM START -->
+	<span ng-show="active == 'projects'">
+		<p>use the form below to sumbit </b> a food item to the Gluten Free database</p>
+		<div class="container">
+		<div class="row">  
+		<div class="col-sm-6 col-sm-offset-3">
+		<form  class = "form" name="glutenform" ng-submit="check_credentials()" novalidate>
+
+			<!-- NAME START -->
+			<div class="form-group" ng-class="{ 'has-error' : glutenform.name.$invalid && !glutenform.name.$pristine }">
+				<label>Name</label>
+				<input type="text" name="name" class="form-control" ng-model="name" required>
+				<p ng-show="glutenform.name.$invalid && !glutenform.name.$pristine" class="help-block">You name is required.</p>
+			</div>
+			<!-- NAME END -->
+			
+			<!-- EMAIL START-->
+			<div class="form-group" ng-class="{ 'has-error' : glutenform.email.$invalid && !glutenform.email.$pristine }">
+				<label>Email</label>
+				<input type="email" name="email" class="form-control" ng-model="email">
+				<p ng-show="glutenform.email.$invalid && !glutenform.email.$pristine" class="help-block">Enter a valid email.</p>
+			</div>
+			<!-- EMAIL END-->
+			
+			<!-- FOOT ITEM START-->
+			<div class="form-group" ng-class="{ 'has-error' : glutenform.fooditem.$invalid && !glutenform.fooditem.$pristine }">
+				<label>Food Item</label>
+				<input type="text" name="fooditem" class="form-control" ng-model="fooditem">
+				<p ng-show="glutenform.fooditem.$invalid && !glutenform.fooditem.$pristine" class="help-block">You Food is required.</p>
+			</div>
+			<!-- FOOD ITEM END-->
+			
+			<!-- RADIO BUTTONS START-->
+			<div class="form-group">
+				<label> Gluten Free</label><br>
+				<Label>Yes</label>
+                <input type="radio" name="glutenfreeyes" value="yes" ng-model="gluten.value">
+			</div>
+			<div class="form-group">
+				<label>No</label> 
+                <input type="radio" name="glutenfreeno" value="no" ng-model="gluten.value">
+				<p ng-show="gluten.value == 'nothing selected' && !glutenform.$pristine">Choose Yes or No.</p>
+            </div>
+			<!-- RADIO BUTTONS END-->
+      
+			<button 
+			type="submit" class="btn btn-primary" ng-disabled="gluten.value == 'NA' || glutenform.$invalid || fooditem == '' || name=='' || email=='' || submitted == 'true'">Submit</button>
+			<br>
+            <span id="message"></span> <!-- MESSAGE TO AUTHENTICATE SUBMISSION SUCCESS-->
+		</form>
+		</div></div></div>
+	</span>
+	<!-- SUBMISSION FORM END -->	
+		</div>
+		<!-- MAIN BODY END -->		
+	
+	<!-- FOOTER START -->
+	<footer>
+		<ul>
+			<li>
+				<p class="home"  ng-click="active='home'">Home</p>
+				<a class="logo" href="#">Gluten Free Checker <i>&copy; 2015</i></a>
+			</li>
+			<li>
+				<p class="services"  ng-click="active='projects'">Submit Food</p>
+		<ul>
+			<li>his link allows customers</a></li>
+			<li>to sumbit food items</a></li>
+			<li>to the database</a></li>
+			<li>that are not already there.</a></li>
+			</ul>
+		</li>
+		<li>
+			<p class="reachus"  ng-click="active='services'">Food Lists</p>
+		<ul>
+			<li>Gluten free and</a></li>
+			<li>gluten containing </a></li>
+			<li>food lists</a></li>
+			</ul>
+		</li>
+		<li>
+			<p class="clients"  ng-click="active='contact'">About</p>
+			<ul>
+				<li>devin.burke@yahoo.com</li>
+				<li>734-560-9022</li>
+				<li><a href="https://www.linkedin.com/profile/view?id=AAIAAA5RA2UB47_mjCAKpdIsqsmOJccJR2XLD_E&trk=nav_responsive_tab_profile_pic">Linkedin</a></li>
+			</ul>
+		</li>
+		</ul>
+	</footer>
+	<!-- FOOTER END -->
+
+		<!-- Include AngularJS from Google's CDN -->
+		<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.0.7/angular.min.js"></script>
+		<script src="script.js"></script>
+	</body>
+</html>
